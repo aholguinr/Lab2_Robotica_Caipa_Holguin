@@ -35,14 +35,22 @@ En primera terminal se ejecuta el comando *roscore*, el cual se trata del comand
 
 En la segunda terminal se ejecuta el comando *rosrun turtlesim turtlesim_node* para crear la interfaz con la tortuga ubicada en el centro de esta. Al ejecutar el comando se evidencia lo dicho previamente, la creación del respectivo nodo y el posicionamiento dado:
 
-![Terminal rosrun turtlesim turtlesim_node]()
+![Terminal rosrun turtlesim turtlesim_node](https://github.com/aholguinr/Lab2_Robotica_Caipa_Holguin/blob/main/Fotos/console%20turtle%20ini.png?raw=true)
 
+![tortuga en posición inicial](https://github.com/aholguinr/Lab2_Robotica_Caipa_Holguin/blob/main/Fotos/turtleIni.png?raw=true)
 
 ### Conexión con Matlab
 
 Siguiendo la guía, en Matlab se escribe el script inicial para trasladar linealmente en X la tortuga una unidad. El código es fácilmente entendible bajo el concepto de los nodos de ROS. Inicialmente se realiza una conexión con el nodo maestro, y luego se define un Publisher o publicador del nodo de turtlesim creado, lo cual es como una especie de objeto que envía información de atributos, almacenados en el mensaje. A este mensaje es posible asignarle valores a los parámetros que lo componen y enviarlo para actualizar el estado del nodo, y por ende generar el movimiento de la turtlesim. 
 
-![Matlab script inicial](https://github.com/aholguinr/Lab2_Robotica_Caipa_Holguin/blob/main/Fotos/cod%20ini%20matlab.png?raw=true)
+```
+rosinit
+velPub = rospublisher('/turtle1/cmd_vel','geometry_msgs/Twist'); %Creación publicador
+velMsg = rosmessage(velPub); %Creación de mensaje
+velMsg.Linear.X = -4; %Valor del mensaje
+send(velPub,velMsg); %Envio
+pause(1)
+```
 
 Ahora bien, al instalar Matlab no se incluyó el Toolbox de ROS, motivo por el cual era necesario añadirlo para ejecutar este script. Hubo unos problemas debido a los permisos de acceso en Linux, donde no dejaba instalar ningún add-on. Para esto, buscando en internet, se encontró la forma de otorgar estos permisos y completar la instalación, a continuación, se evidencia este código:
 
@@ -51,18 +59,39 @@ Ahora bien, al instalar Matlab no se incluyó el Toolbox de ROS, motivo por el c
 
 Simplemente fue necesario editar el código a la versión 2020b, es decir con el comando:
 
+```
 sudo chown -R $LOGNAME: /usr/local/MATLAB/R2020b
+```
 
 Con esto funcionó correctamente la instalación del Toolbox de ROS.
 
-Ahora bien, para desconectar samonda
-
+Ahora bien, para desconectar o finalizar el nodo maestro en Matlab, solo basta con hacer uso del comando _rosshutdown_.
 
 
 ### Movimiento inicial de la tortuga
 
 
-Después de esto, fue fácil generar los movimientos de la tortuga. Realizando diferentes variaciones del las componentes de velMsg.Linear.X y velMsg.Linear.Y del script, se generaron diferentes movimientos como se ve en la siguiente imagen:
+Después de esto, fue fácil generar los movimientos de la tortuga, realizando diferentes variaciones del las componentes de velMsg.Linear.X y velMsg.Linear.Y del script, llegando a algunos de pruebas como el representado en el siguiente código:
+```
+rosshutdown
+rosinit
+velPub = rospublisher('/turtle1/cmd_vel','geometry_msgs/Twist'); %Creaci ́on publicador
+velMsg = rosmessage(velPub); %Creaci ́on de mensaje
+velMsg.Linear.X = -4; %Valor del mensaje
+send(velPub,velMsg); %Envio
+pause(1)
+
+for i=1:10
+    velMsg = rosmessage(velPub); %Creaci ́on de mensaje
+    velMsg.Linear.Y = -1; %Valor del mensaje
+    pause(1000);
+    send(velPub,velMsg);
+   
+end
+rosshutdown
+```
+
+Lo cual brinda resultados similares a como se ve en la siguiente imagen:
 
 ![Movimientos básicos turtlesim](https://github.com/aholguinr/Lab2_Robotica_Caipa_Holguin/blob/main/Fotos/turtlesim%20mov%20ini.png?raw=true)
 
@@ -91,7 +120,36 @@ Con esto se puede conocer la posición X y Y de la tortuga, y además el ángulo
 
 Ahora bien, a pesar de que adquirir los datos de la *pose* es relativamente sencillo, ya que la *pose* es un Topic que se puede subscribir, para editar estos datos se necesitan utilizar los servicios disponibles para el *turtlesim*, después de ver la documentación, se encuentran los servicios turtleX/teleport_absolute y turtleX/teleport_relative, donde se pueden realizar cambios respecto a la pose de manera absoluta al marco de referencia global, o relativa, cambiando valores con relación a la propia tortuga.
 
+```
+rosshutdown
+clear
+rosinit
+rostopic list
+[velPub,velMsg] = rospublisher('/turtle1/cmd_vel','geometry_msgs/Twist'); %Creaci ́on publicador
+[TurtlePubPose,PoseMsg]=rospublisher('/turtle1/pose','turtlesim/Pose'); %Creaci ́on publicador
+[TelRelSrv,TelRelMsg]=rossvcclient("/turtle1/teleport_relative");
+[TelAbsSrv,TelAbsMsg]=rossvcclient("/turtle1/teleport_absolute");
 
+subVel=rossubscriber("/turtle1/cmd_vel");
+subPose=rossubscriber("/turtle1/pose");
+```
+
+De esta forma, y haciendo uso del concepto de servicios, aquí se puede ver un par de códigos para modificar la posición, haciendo cambio relativo:
+```
+TelRelMsg.Linear=1;
+TelRelMsg.Angular=0;
+
+TelRelSrv.call(TelRelMsg);
+subPose.LatestMessage
+```
+Y haciendo cambio absoluto:
+```
+TelAbsMsg.X=0
+TelAbsMsg.Y=0
+TelAbsMsg.Theta=0
+TelAbsSrv.call(TelAbsMsg);
+```
+Y no olvidar hacer uso del comando _rosshutdown_ para cerrar las conexiones del nodo maestro de ROS. 
 
 
 ## Programa Turtlesim
