@@ -152,7 +152,9 @@ TelAbsSrv.call(TelAbsMsg);
 ```
 Y no olvidar hacer uso del comando _rosshutdown_ para cerrar las conexiones del nodo maestro de ROS. 
 
-
+```
+rosshutdown
+```
 ## Programa Turtlesim
 
 Se debe implementar un programa que permita las siguientes funcionalidades con la tortuga de la interfaz de turtlesim:
@@ -164,6 +166,7 @@ Se debe implementar un programa que permita las siguientes funcionalidades con l
 
 Para la realización del programa, se decidió continuar utilizando Matlab debido a la facilidad de uso de este. Con lo aprendido en los puntos anteriores, para editar la pose de la tortuga, se utilizan los servicios de "/turtle1/teleport_relative" y "/turtle1/teleport_absolute". También se subscribe al tópico “/turtle1/pose" para conocer la pose actual de la tortuga.
 Para identificación de teclas pulsadas, dentro de una figura vacía, se utiliza la función waitforbuttonpress y se obtiene el valor obtenido, donde se tiene que estos valores obtenidos son:
+
 - W:119
 - A: 97
 - S: 115
@@ -173,6 +176,7 @@ Para identificación de teclas pulsadas, dentro de una figura vacía, se utiliza
 - E: 101
 
 A partir de esto, se realiza un ciclo while hasta que se presione la tecla E, referente a Exit o Escape del programa y cierre funcionalidades. Hasta que eso no suceda, dependiendo de las entradas generadas por tecla presionada, se cambian los valores de pose de la tortuga en pasos lineares de 0.25 para adelante y para atrás, y pasos angulares de 0.25 radianes horarios y antihorarios, todo eso mediante el servicio “/turtle1/teleport_relative". Este servicio también se utiliza para el giro de 180 grados, donde se adquiere el valor de theta de la pose mediante el subscriber del mismo, y si este valor es menor a 0, se añaden pi radianes, de lo contrario, se restan pi radianes. Por último, para volver a la posición inicial, se tiene en cuenta que estos valores siempre corresponden en X y Y de 5.44445 debido a las especificaciones de la ventana de la tortuga, por lo que se utiliza el servicio "/turtle1/teleport_absolute" y se asignan estos valores X y Y, y un valor theta de 0, correspondiente a las condiciones iniciales.
+
 Con todo y lo anterior, este resultado puede evidenciarse en el archivo Lab2.mlx del repositorio, y en el video “resultados.mp4” el cual se grabó desde un celular para que se identifique de mejor forma las pulsaciones de teclado y los cambios generados en la tortuga.
 
 
