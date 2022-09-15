@@ -71,7 +71,7 @@ Ahora bien, para desconectar o finalizar el nodo maestro en Matlab, solo basta c
 ### Movimiento inicial de la tortuga
 
 
-Después de esto, fue fácil generar los movimientos de la tortuga, realizando diferentes variaciones del las componentes de velMsg.Linear.X y velMsg.Linear.Y del script, llegando a algunos de pruebas como el representado en el siguiente código:
+Después de esto, fue sencillo generar los movimientos de la tortuga, realizando diferentes variaciones del las componentes de velMsg.Linear.X y velMsg.Linear.Y del script, llegando a algunos casos de pruebas como el representado en el siguiente código:
 ```
 rosshutdown
 rosinit
@@ -82,9 +82,10 @@ send(velPub,velMsg); %Envio
 pause(1)
 
 for i=1:10
-    velMsg = rosmessage(velPub); %Creaci ́on de mensaje
-    velMsg.Linear.Y = -1; %Valor del mensaje
-    pause(1000);
+    velMsg = rosmessage(velPub); 
+    velMsg.Linear.X = 1; 
+    velMsg.Linear.Y = -1; 
+    pause(1);
     send(velPub,velMsg);
    
 end
