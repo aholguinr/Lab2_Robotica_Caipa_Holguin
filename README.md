@@ -189,3 +189,5 @@ Con todo y lo anterior, este resultado puede evidenciarse en el archivo Lab2.mlx
 
 - Los nodos de ROS permiten múltiples funcionalidades a través de estructuras basadas en objetos y con comandos que permiten la conexión con otros nodos, tanto para información a brindar publicando o a recibir o captar información suscribiéndose, y otros conceptos fundamentales como los atributos de un publicador y los servicios, que permiten conocer parámetros para hacer uso de la información en ellos o modificarla.
 
+- Turtlesim es una excelente aproximación inicial a lo que es ROS, ya que permite el trabajo de nodos, la interacción entre ellos, y el uso de Linux, el mismo ROS y conectar con aplicaciones de código como Matlab o Python, adicionalmente de ver en una interfaz gráfica la capacidad de dichos comandos, permite una mejor comprensión de ellos. 
+
