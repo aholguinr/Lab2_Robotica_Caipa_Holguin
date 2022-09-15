@@ -175,10 +175,80 @@ Para identificación de teclas pulsadas, dentro de una figura vacía, se utiliza
 - Espacio: 32
 - E: 101
 
-A partir de esto, se realiza un ciclo while hasta que se presione la tecla E, referente a Exit o Escape del programa y cierre funcionalidades. Hasta que eso no suceda, dependiendo de las entradas generadas por tecla presionada, se cambian los valores de pose de la tortuga en pasos lineares de 0.25 para adelante y para atrás, y pasos angulares de 0.25 radianes horarios y antihorarios, todo eso mediante el servicio “/turtle1/teleport_relative". Este servicio también se utiliza para el giro de 180 grados, donde se adquiere el valor de theta de la pose mediante el subscriber del mismo, y si este valor es menor a 0, se añaden pi radianes, de lo contrario, se restan pi radianes. Por último, para volver a la posición inicial, se tiene en cuenta que estos valores siempre corresponden en X y Y de 5.44445 debido a las especificaciones de la ventana de la tortuga, por lo que se utiliza el servicio "/turtle1/teleport_absolute" y se asignan estos valores X y Y, y un valor theta de 0, correspondiente a las condiciones iniciales.
+A partir de esto, se realiza un ciclo while hasta que se presione la tecla E, referente a Exit o Escape del programa y cierre funcionalidades. Hasta que eso no suceda, dependiendo de las entradas generadas por tecla presionada, se cambian los valores de pose de la tortuga en pasos lineares de 0.25 unidades para adelante y para atrás, y pasos angulares de 0.25 radianes horarios y antihorarios, todo eso mediante el servicio “/turtle1/teleport_relative". Este servicio también se utiliza para el giro de 180 grados, donde se adquiere el valor de theta de la pose mediante el subscriber del mismo, y si este valor es menor a 0, se añaden pi radianes, de lo contrario, se restan pi radianes. Por último, para volver a la posición inicial, se tiene en cuenta que estos valores siempre corresponden en X y Y de 5.44445 debido a las especificaciones de la ventana de la tortuga, por lo que se utiliza el servicio "/turtle1/teleport_absolute" y se asignan estos valores X y Y, y un valor theta de 0, correspondiente a las condiciones iniciales.
 
-Con todo y lo anterior, este resultado puede evidenciarse en el archivo Lab2.mlx del repositorio, y en el video “resultados.mp4” el cual se grabó desde un celular para que se identifique de mejor forma las pulsaciones de teclado y los cambios generados en la tortuga.
+Con todo y lo anterior, El cpodigo puede evidenciarse en el archivo Lab2.mlx del repositorio, o en el código mostrado a continuación.
 
+```
+rosshutdown
+clear
+rosinit
+[velPub,velMsg] = rospublisher('/turtle1/cmd_vel','geometry_msgs/Twist'); %Creaci ́on publicador
+[TurtlePubPose,PoseMsg]=rospublisher('/turtle1/pose','turtlesim/Pose'); %Creaci ́on publicador
+[TelRelSrv,TelRelMsg]=rossvcclient("/turtle1/teleport_relative");
+[TelAbsSrv,TelAbsMsg]=rossvcclient("/turtle1/teleport_absolute");
+
+subVel=rossubscriber("/turtle1/cmd_vel");
+subPose=rossubscriber("/turtle1/pose");
+
+figure("Name","1")
+kp=0;
+
+while(kp~=101)
+    k = waitforbuttonpress;
+    kp = double(get(gcf,'CurrentCharacter'));
+    % w 119
+    % a 97
+    % s 115
+    % d 100
+    %e=101
+    %q=113
+    switch kp
+        case 97 %A: Giro antihorario
+            TelRelMsg.Linear=0;
+            TelRelMsg.Angular=0.25;
+            TelRelSrv.call(TelRelMsg);
+        case 100 %D: Giro horario
+            TelRelMsg.Linear=0;
+            TelRelMsg.Angular=-0.25;
+            TelRelSrv.call(TelRelMsg);
+        case 119 %W: Movimiento hacia adelante
+            TelRelMsg.Linear=0.25;
+            TelRelMsg.Angular=0;
+            TelRelSrv.call(TelRelMsg);
+        case 115 %S: Movimiento hacia atras
+            TelRelMsg.Linear=-0.25;
+            TelRelMsg.Angular=0;
+            TelRelSrv.call(TelRelMsg);
+        case 114 %R: Retorno posicion media y theta 0
+            TelAbsMsg.X=5.44445;
+            TelAbsMsg.Y=5.44445;
+            TelAbsMsg.Theta=0;
+            TelAbsSrv.call(TelAbsMsg);
+        case 32 %Espacio: Giro de 180 grados
+            TelRelMsg.Linear=0;
+            TelRelMsg.Angular=0;
+            subPose.LatestMessage.Theta
+            if(subPose.LatestMessage.Theta<=0)
+                TelRelMsg.Angular=pi
+            else  
+               TelRelMsg.Angular=-pi; 
+            end
+            
+            TelRelSrv.call(TelRelMsg);
+            
+        otherwise
+            
+    end
+    
+end
+close '1'
+rosshutdown
+```
+
+Para mostrar los resultados, se realizó el video llamado: “resultados.mp4” que se encuentra en este repositorio, el cual se grabó desde un celular para que se identifique de mejor forma las pulsaciones de teclado y los cambios generados en la tortuga. También se muestra una imágen con un ejemplo del movimiento de la tortuga, mostrando todas las funcionalidades posibles en los trazos de la tortuga.
+
+![Movimientos proyecto tortuga](https://github.com/aholguinr/Lab2_Robotica_Caipa_Holguin/blob/main/Fotos/mov%20tortuga.png?raw=true)
 
 
 
