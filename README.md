@@ -183,4 +183,9 @@ Con todo y lo anterior, este resultado puede evidenciarse en el archivo Lab2.mlx
 
 
 ## Conclusiones
+- Los aplicativos para robótica funcionan hoy en día fundamentalmente sobre el Middleware ROS o sistema operativo robótico, que permite conectar los aplicativos conocidos como nodos entre ellos para intercambiar información y cumplir determinadas funcionalidades.
+
+- Para la implementación de ROS es necesario contar con el sistema operativo Linux, el cual cuenta con múltiples ventajas a la hora de trabajo, en especial el código abierto y el uso para varias aplicaciones en ingeniería. Sin embargo, tanto su instalación como un primer acercamiento a este pueden representar complicaciones inesperadas, que si bien relativamente sencillas de corregir por la cantidad de información disponible en línea, genera molestias en el usuario.
+
+- Los nodos de ROS permiten múltiples funcionalidades a través de estructuras basadas en objetos y con comandos que permiten la conexión con otros nodos, tanto para información a brindar publicando o a recibir o captar información suscribiéndose, y otros conceptos fundamentales como los atributos de un publicador y los servicios, que permiten conocer parámetros para hacer uso de la información en ellos o modificarla.
 
